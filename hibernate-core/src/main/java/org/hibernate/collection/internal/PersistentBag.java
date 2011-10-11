@@ -158,9 +158,13 @@ public class PersistentBag extends AbstractPersistentCollection implements List 
 		int size = array.length;
 		beforeInitialize( persister, size );
 		for ( int i = 0; i < size; i++ ) {
-			Object element = persister.getElementType().assemble( array[i], getSession(), owner );
-			if ( element!=null ) {
-				bag.add( element );
+			try {
+				Object element = persister.getElementType().assemble( array[i], getSession(), owner );
+				if ( element!=null ) {
+					bag.add( element );
+				}
+			} catch (javax.persistence.EntityNotFoundException e) {
+				// just skip, because it equals to element=null
 			}
 		}
 	}
